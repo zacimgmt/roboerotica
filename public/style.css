@@ -1,0 +1,28 @@
+body {
+    background-color: pink;
+    font-family:Verdana, Geneva, Tahoma, sans-serif
+}
+
+.image img {
+    object-fit: cover;
+}
+
+#images {
+     display: flex;
+     flex: 1 1 300px;
+     flex-wrap: wrap;
+     align-items: center;
+     justify-content: center;
+     
+
+     
+}
+
+
+.image { 
+    margin: 25px;
+    box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.5),
+    10px 10px 20px peachpuff    ;
+    text-align: center;
+    background-color: white;
+}

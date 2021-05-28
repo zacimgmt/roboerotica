@@ -1,10 +1,21 @@
 <!doctype html>
 <html>
 <head>
-    <title></title>
+    <title>Catcae</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="main">
+        <div id="images">
+        <div class="image" v-for="image in images">
+            <img :src='image.url' width='500px' height='350px'>
+            <p>{{image.title}}
+            </p>
+        </div>
+        </div>
+    </div>
     <script src="/js/vue.js"></script>
     <script src="/js/axios.min.js"></script>
+    <script src="/js/script.js"></script>
 </body>
 </html>
