@@ -10,22 +10,22 @@ CREATE TABLE images(
 );
 
 INSERT INTO images (url, username, title, description) VALUES (
-    'https://s3.amazonaws.com/imageboard/jAVZmnxnZ-U95ap2-PLliFFF7TO0KqZm.jpg',
+    'https://i1.sndcdn.com/artworks-000565144952-lob8s9-t500x500.jpg',
     'funkychicken',
-    'Welcome to Spiced and the Future!',
+    '',
     'This photo brings back so many great memories.'
 );
 
 INSERT INTO images (url, username, title, description) VALUES (
-    'https://s3.amazonaws.com/imageboard/wg8d94G_HrWdq7bU_2wT6Y6F3zrX-kej.jpg',
+    'https://d266gltxjnum49.cloudfront.net/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/c/o/e8/costume-sexy-bbbb10-557736silver_1.jpg',
     'discoduck',
-    'Elvis',
+    '',
     'We can''t go on together with suspicious minds.'
 );
 
 INSERT INTO images (url, username, title, description) VALUES (
-    'https://s3.amazonaws.com/imageboard/XCv4AwJdm6QuzjenFPKJocpipRNNMwze.jpg',
+    'https://elements-video-cover-images-0.imgix.net/files/fe505f72-9a28-4d98-90dd-a07b3779ccec/inline_image_preview.jpg?auto=compress&crop=edges&fit=crop&fm=jpeg&h=800&w=1200&s=aabc7651a0892352e972d9862b1c8799',
     'discoduck',
-    'To be or not to be',
+    '',
     'That is the question.'
 );
