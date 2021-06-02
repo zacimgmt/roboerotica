@@ -7,39 +7,81 @@
 </head>
 <body>
     <div id="main">
-        <div id="uploader">
+        <div id="notifications" v-if='notifications'>{{notifications}} new images</div>
+        <div id="containerUp">
+            <div id="header">
+                <div id="title">ROBO EROTICA </div> 
+                <div id='upload' @click='upload = !upload'>upload</div>
+            </div>
+        </div>
+        <div id="images">
             
+            <div class="image" v-for="image in images" >
+                <a :href="'#' + image.id">
+                    <img :key="image.id":src='image.url' width='500px' height='350px' @click='handleImageClick(image.id)'>
+                </a>
+            </div>
+            
+            <div id="uploader" v-if='upload' >
+                <p id="X" @click='upload = 0'>x</p>
+                
+                <div id="uploaderContainer">
                 <input  name="title" placeholder= "Title" v-model="title">
                 <input  name="description" placeholder= "Description" v-model="description">
                 <input  name="username" placeholder= "Username" v-model="username">
-                <label for="username">username</label>
+                <!-- <label for="username">username</label> -->
                 <input type="file" name="image" accept="image/" @change = "handleFileChange">
                 <label for="image"></label>
                 <button @click.prevent='handleSubmit'>Submit</button>
+                </div>
+            </div>
         </div>
-        <div id="images">
-        <div class="image" v-for="image in images" >
-            <img :key="image.id":src='image.url' width='500px' height='350px' @click='handleImageClick(image.id)'>
+    <p></p> <button v-if='show' id='more' @click='more'>more</button>
+    <transition name='fade'>
+        <image-component
+        v-if='imageId'
+        @close='closeInParent'
+        :id='imageId'>
+        </image-component>
         </div>
-        </div>
- <transition name='fade'>
+    </transition>
 
-    <image-component
-    v-if='clicked'
-    @close='closeInParent'
-    :id='clicked'></image-component>
-    </div>
-</transition>
+
     <script id="template" type='text/x-template'>
-       <div class="component" @click='closeInChild'>
+       <div class="component">
             
             <div id="card">
+                <p id="X" @click='closeInChild'>x</p>
+                <a :href='"#" + prevId' id="prev"><div id="rightArrow" title="prev"></div></a>
+                <a :href='"#" + nextId' id="next" v-if='nextId' title='next'><div id="leftArrow" title="prev"></div></a>
+               
                 <img :src="url" alt="" width="600px" height="600px" >
-                <p>Uploaded by {{username}}</p>
+                <div><p>{{title}}</p>
+                <p>Uploaded by {{username}} on {{created_at}}</p></div>
+                <div>
+                    <input class='commentInput' type="text" placeholder='username' v-model='comment_username'>
+                    <input class='commentInput'type="text" placeholder='comment'
+                    v-model='comment'>
+                    <button 
+                    @click='submitComment'>submit</button>
+                </div>
             </div>
+            <comment-component :id='id' :justAdded='justAdded'></comment-component>
         </div>
     
     </script>
+
+    <script id="comment" type='text/x-template'>
+        <div id="comments">
+            <div class="comment" v-for='comment in comments'>
+                <p class='pUsername'>{{comment.username}}</p>
+                <p class='pComment'>{{comment.comment}}</p>
+                <p class='pTimestamp'>{{comment.created_at}}</p>
+
+            </div>
+        </div>
+    </script>
+
     <script src="/js/vue.js"></script>
     <script src="/js/axios.min.js"></script>
     <script src="/js/script.js"></script>
