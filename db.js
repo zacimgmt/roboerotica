@@ -12,7 +12,7 @@ exports.getImages = () => {
 
 exports.getImage = (id) => {
     return db.query(
-        `SELECT url, title, description, username, (SELECT id FROM images WHERE id < $1 ORDER BY id DESC LIMIT 1 ) AS "prevId",(SELECT id FROM images WHERE id > $1 LIMIT 1) AS "nextId", created_at  FROM images WHERE id = ($1)`,
+        `SELECT url, title, description, username, (SELECT id FROM images WHERE id < $1 ORDER BY id DESC LIMIT 1 ) AS "prevId",(SELECT id FROM images WHERE id > $1 LIMIT 1) AS "nextId", created_at, id  FROM images WHERE id = ($1)`,
         [id]
     );
 };
@@ -61,4 +61,12 @@ exports.getComments = (imageId) => {
 
 exports.getNotification = (id) => { 
     return db.query(`SELECT id FROM images WHERE id > $1`, [id]);
-}
+};
+
+exports.deleteImage = (id) => {
+    return db.query(`DELETE FROM images WHERE id = $1`, [id]);
+};
+
+exports.deleteComments = (id) => {
+    return db.query(`DELETE FROM comments WHERE image_id = $1`, [id]);
+};

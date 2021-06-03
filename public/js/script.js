@@ -38,6 +38,11 @@
                 const inputs = document.getElementsByClassName("commentInput");
                 inputs[0].value = "";
             },
+            deleteImg(id) {
+                console.log("id: ", id);
+                axios.get(`/delete/${this.id}`);
+                this.$emit("deleteimg");
+            },
         },
         mounted() {
             console.log("this.props: ", this.id);
@@ -63,9 +68,9 @@
                     this.prevId = prevId;
                     this.nextId = nextId;
                     this.created_at = new Intl.DateTimeFormat("en-GB", {
-                        datesStyle: "long",
+                        dateStyle: "long",
                         timeStyle: "short",
-                    }).format(created_at);
+                    }).format(new Date(created_at));
                 }
             });
         },
@@ -94,7 +99,7 @@
                         this.prevId = prevId;
                         this.nextId = nextId;
                         this.created_at = new Intl.DateTimeFormat("en-GB", {
-                            datesStyle: "long",
+                            dateStyle: "long",
                             timeStyle: "short",
                         }).format(new Date(created_at));
                     }
@@ -113,6 +118,10 @@
             axios.get(`/comment/${this.id}`).then((data) => {
                 console.log("data in axios get comment this id: ", data.data);
                 for (var i = 0; i < data.data.length; i++) {
+                    data.data[i].created_at = new Intl.DateTimeFormat("en-GB", {
+                        dateStyle: "long",
+                        timeStyle: "short",
+                    }).format(new Date(data.data[i].created_at));
                     this.comments.push(data.data[i]);
                 }
                 console.log("this.comments: ", this.comments);
@@ -148,10 +157,12 @@
             description: "",
             image: null,
             clicked: 0,
-            show: true,
+            show: false,
             imageId: location.hash.slice(1),
             upload: 0,
-            notifications: 0
+            notifications: 0,
+            notifId: 0,
+            uploadError: 0,
         },
 
         mounted() {
@@ -162,6 +173,9 @@
             axios.get("/images").then(function (resp) {
                 console.log("resp: ", resp.data.rows);
                 vueInstance.images = resp.data.rows;
+                setInterval(() => {
+                    scrollPos(vueInstance.images);
+                }, 1000);
             });
             console.log("document.location: ", document.location.hash);
             window.addEventListener("hashchange", (e) => {
@@ -170,12 +184,17 @@
             });
 
             setInterval(() => {
-                axios.get(`/notifications/${this.images[0].id}`).then((data) => {
-                    console.log('data.data: ', data.data);
-                    this.notifications = data.data.notifications;
-                }) ;
+                axios
+                    .get(`/notifications/${this.images[0].id}`)
+                    .then((data) => {
+                        console.log("data.data: ", data.data);
+                        this.notifications = data.data.notifications;
+                        this.notifId = data.data.id;
+                    });
             }, 5000);
-            
+        },
+        updated() {
+            console.log("data got updated");
         },
         methods: {
             handleFileChange(e) {
@@ -184,8 +203,6 @@
                 this.image = e.target.files[0];
             },
             handleSubmit(e) {
-                this.upload = !this.upload;
-
                 console.log("this on click: ", this);
                 const data = new FormData();
                 data.append("title", this.title);
@@ -193,21 +210,28 @@
                 data.append("description", this.description);
                 data.append("username", this.username);
                 axios.post("/upload", data).then((data) => {
-                    const { url, title, description, username, id } = data.data;
+                    if (data.data.failure) {
+                        this.uploadError = 1;
+                    } else {
+                        const { url, title, description, username, id } =
+                            data.data;
 
-                    this.images.unshift({
-                        url,
-                        title,
-                        id,
-                        description,
-                        username,
-                    });
-                    console.log("data in axios: ", data);
+                        this.images.unshift({
+                            url,
+                            title,
+                            id,
+                            description,
+                            username,
+                        });
+                        console.log("data in axios: ", data);
+                        const inputs = document.getElementsByTagName("input");
+                        for (var i = 0; i < inputs.length; i++) {
+                            inputs[i].value = "";
+                        }
+                        this.upload = !this.upload;
+                        this.uploadError = 0;
+                    }
                 });
-                const inputs = document.getElementsByTagName("input");
-                for (var i = 0; i < inputs.length; i++) {
-                    inputs[i].value = "";
-                }
             },
             handleImageClick(argument) {
                 this.clicked = argument;
@@ -237,6 +261,29 @@
                     console.log("this.images: ", this.images);
                 });
             },
+            update() {
+                const vueInstance = this;
+                axios
+                    .get(`/newImage/${vueInstance.notifId}`)
+                    .then(function (data) {
+                        console.log("resp in update: ", data);
+
+                        console.log("this.images: ", this.images);
+                        vueInstance.images.unshift(data.data.data);
+                    });
+            },
+            deleteImgParent() {
+                console.log("happened");
+                const vueInstance = this;
+                for (let i = 0; i < vueInstance.images.length; i++) {
+                    console.log("vueInstance.images: ", vueInstance.images);
+
+                    if (vueInstance.images[i].id == vueInstance.imageId) {
+                        vueInstance.images.splice(i, 1);
+                        vueInstance.imageId = 0;
+                    }
+                }
+            },
         },
     });
 
@@ -249,5 +296,27 @@
             }
             console.log("this.comments in commentaixos: ", this.comments);
         });
+    }
+
+    function scrollPos(images) {
+        // console.log('images: ', images);
+        const currentPos =
+            document.documentElement.scrollTop +
+            document.documentElement.clientHeight;
+        const treshold = document.documentElement.scrollHeight - 500;
+        setTimeout(() => {
+            if (currentPos > treshold) {
+                const { id } = images[images.length - 1];
+
+                axios.get(`/more/${id}`).then((data) => {
+                    // console.log("data", data);
+
+                    for (var i = 0; i < data.data.length; i++) {
+                        images.push(data.data[i]);
+                    }
+                    // console.log("this.images: ", this.images);
+                });
+            }
+        }, 500);
     }
 })();

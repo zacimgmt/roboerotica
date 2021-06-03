@@ -30,8 +30,7 @@ app.use(express.static("public"));
 
 app.get("/images", (req, res) => {
     db.getImages().then((data) => {
-       res.json(data);
-      
+        res.json(data);
     });
 });
 
@@ -58,7 +57,12 @@ app.post("/upload", uploader.single("image"), s3.upload, (req, res) => {
                     success: true,
                 });
             })
-            .catch((e) => console.log("e: ", e));
+            .catch((e) => {
+                console.log("e: ", e);
+                res.json({
+                    failure: true,
+                });
+            });
     } else {
         res.json({
             success: false,
@@ -69,10 +73,18 @@ app.post("/upload", uploader.single("image"), s3.upload, (req, res) => {
 app.get("/component/:id", (req, res) => {
     db.getImage(req.params.id).then((data) => {
         console.log("data in getImage", data);
-        if (!data.rowCount) { 
-            return res.json({failure: true});
-        } 
-        const { username, description, title, url, created_at, prevId, nextId } = data.rows[0];
+        if (!data.rowCount) {
+            return res.json({ failure: true });
+        }
+        const {
+            username,
+            description,
+            title,
+            url,
+            created_at,
+            prevId,
+            nextId,
+        } = data.rows[0];
         res.json({
             url,
             username,
@@ -80,7 +92,7 @@ app.get("/component/:id", (req, res) => {
             description,
             created_at,
             prevId,
-            nextId
+            nextId,
         });
     });
 });
@@ -93,7 +105,6 @@ app.get("/more/:id", (req, res) => {
 });
 
 app.get("/comment/:id", (req, res) => {
-  
     db.getComments(req.params.id).then((data) => {
         // console.log("data in get comments: ", data);
         const comments = [];
@@ -134,16 +145,38 @@ app.post("/comment", (req, res) => {
     );
 });
 
-app.get('/notifications/:id', (req, res) => {
+app.get("/notifications/:id", (req, res) => {
     db.getNotification(req.params.id).then((data) => {
-        res.json({
-            notifications: data.rowCount});
+        if (data.rows.length == 1) {
+            res.json({
+                notifications: data.rowCount,
+                id: data.rows[0].id || null,
+            });
+        } else {
+            res.json({
+                notifications: data.rowCount,
+            });
+        }
+    });
+});
+
+app.get("/newImage/:id", (req, res) => {
+    db.getImage(req.params.id).then((data) => {
+        res.json({ data: data.rows[0] });
+    });
+});
+
+app.get("/delete/:id", (req, res) => {
+    db.deleteImage(req.params.id).then((data) => {
+        db.deleteComments(req.params.id).then((data) => {
+            res.json({
+                success: true,
+            });
+        });
     });
 });
 
 app.listen(8080, () => console.log("my heart beating like an 808"));
-
-
 
 //   (() => {
 //       for (var i = 0; i < data.rows.length; i++) {

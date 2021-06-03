@@ -7,7 +7,7 @@
 </head>
 <body>
     <div id="main">
-        <div id="notifications" v-if='notifications'>{{notifications}} new images</div>
+        <div id="notifications" v-if='notifications' @click='update'>{{notifications}} new images</div>
         <div id="containerUp">
             <div id="header">
                 <div id="title">ROBO EROTICA </div> 
@@ -17,15 +17,14 @@
         <div id="images">
             
             <div class="image" v-for="image in images" >
-                <a :href="'#' + image.id">
-                    <img :key="image.id":src='image.url' width='500px' height='350px' @click='handleImageClick(image.id)'>
-                </a>
-            </div>
+                <a :href="'#' + image.id"><img :key="image.id":src='image.url' width='500px' height='350px' @click='handleImageClick(image.id)'>
+                </a></div>
             
             <div id="uploader" v-if='upload' >
                 <p id="X" @click='upload = 0'>x</p>
                 
                 <div id="uploaderContainer">
+                <p v-if='uploadError' style='color: whitesmoke'>oops, something went wrong!</p>
                 <input  name="title" placeholder= "Title" v-model="title">
                 <input  name="description" placeholder= "Description" v-model="description">
                 <input  name="username" placeholder= "Username" v-model="username">
@@ -41,7 +40,8 @@
         <image-component
         v-if='imageId'
         @close='closeInParent'
-        :id='imageId'>
+        :id='imageId'
+        @deleteimg='deleteImgParent'>
         </image-component>
         </div>
     </transition>
@@ -52,19 +52,21 @@
             
             <div id="card">
                 <p id="X" @click='closeInChild'>x</p>
-                <a :href='"#" + prevId' id="prev"><div id="rightArrow" title="prev"></div></a>
+                <a :href='"#" + prevId' id="prev" v-if='prevId'><div id="rightArrow" title="prev"></div></a>
                 <a :href='"#" + nextId' id="next" v-if='nextId' title='next'><div id="leftArrow" title="prev"></div></a>
                
                 <img :src="url" alt="" width="600px" height="600px" >
                 <div><p>{{title}}</p>
-                <p>Uploaded by {{username}} on {{created_at}}</p></div>
-                <div>
+                <p style='opacity: 0.7'>Uploaded by {{username}} on {{created_at}}</p></div>
+                <div>   
+               
                     <input class='commentInput' type="text" placeholder='username' v-model='comment_username'>
                     <input class='commentInput'type="text" placeholder='comment'
                     v-model='comment'>
                     <button 
-                    @click='submitComment'>submit</button>
+                    @click='submitComment'>upload</button>
                 </div>
+                <p id='delete' @click='deleteImg(id)' >Delete</p>
             </div>
             <comment-component :id='id' :justAdded='justAdded'></comment-component>
         </div>
