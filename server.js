@@ -176,18 +176,4 @@ app.get("/delete/:id", (req, res) => {
     });
 });
 
-app.listen(8080, () => console.log("my heart beating like an 808"));
-
-//   (() => {
-//       for (var i = 0; i < data.rows.length; i++) {
-//           (() => {
-//               let x = i;
-//               db.getComments(data.rows[x].id).then((resp) => {
-//                   console.log("resp: ", resp.rows.length);
-//                   console.log("data.rows[x]: ", data.rows[x]);
-//                   data.rows[x].commentCount = resp.rows.length;
-//                   console.log("data.rows[x]: ", data.rows[x]);
-//               });
-//           })();
-//       }
-//   })();
+app.listen(process.env.PORT || 8080, () => console.log("my heart beating like an 808"));
