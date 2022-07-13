@@ -36,9 +36,9 @@ app.get("/images", (req, res) => {
 
 app.post("/upload", uploader.single("image"), s3.upload, (req, res) => {
     if (req.file) {
-        // console.log("req.file in post upload: ", req.file);
+        console.log("req.file in post upload: ", req.file);
         // console.log("req.body in submit: ", req.body);
-        const url = `https://s3.amazonaws.com/spicedling/${req.file.filename}`;
+        const url = `https://roboerotica.s3.eu-central-1.amazonaws.com/${req.file.filename}`;
         db.addImage(
             url,
             req.body.title || null,
@@ -72,7 +72,7 @@ app.post("/upload", uploader.single("image"), s3.upload, (req, res) => {
 
 app.get("/component/:id", (req, res) => {
     db.getImage(req.params.id).then((data) => {
-        console.log("data in getImage", data);
+        // console.log("data in getImage", data);
         if (!data.rowCount) {
             return res.json({ failure: true });
         }

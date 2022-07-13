@@ -18,7 +18,7 @@ exports.upload = (req, res, next) => {
 
     const promise = s3
         .putObject({
-            Bucket: "spicedling",
+            Bucket: "roboerotica",
             ACL: "public-read",
             Key: filename,
             Body: fs.createReadStream(path),
