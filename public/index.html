@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>Cyborgiana</title>
+    <title>ROBO EROTICA</title>
     <link rel="stylesheet" href="style.css">
     <link rel="shortcut icon" href="cyborgiana.png" type="image/x-icon">
 </head>
@@ -22,13 +22,11 @@
             
             <div id="uploader" v-if='upload' >
                 <p id="X" @click='upload = 0'>x</p>
-                
                 <div id="uploaderContainer">
                 <p v-if='uploadError' style='color: whitesmoke'>oops, something went wrong!</p>
                 <input  name="title" placeholder= "Title" v-model="title">
                 <input  name="description" placeholder= "Description" v-model="description">
                 <input  name="username" placeholder= "Username" v-model="username">
-                <!-- <label for="username">username</label> -->
                 <input type="file" name="image" accept="image/" @change = "handleFileChange">
                 <label for="image"></label>
                 <button @click.prevent='handleSubmit'>Submit</button>
