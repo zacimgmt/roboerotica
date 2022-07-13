@@ -4,10 +4,9 @@ body {
     font-family: "Montserrat";
     text-align: center;
     width: 100vw;
-    height: 90vh;
+    min-height: 100vh;
     background-image: url("./bubbles.jpeg");
     background-size: cover;
-    
 }
 
 #main {
@@ -46,8 +45,8 @@ body {
     background-color: rgba(129, 7, 177, 0.4);
 }
 
-#more { 
-        margin-top: 20px;
+#more {
+    margin-top: 20px;
     margin-bottom: 30px;
 }
 
